@@ -7,238 +7,211 @@
 //============================================================================
 
 #include <iostream>
+#include <array>
+#include <vector>
 #include "core.hpp"
+
+#include "point.hpp"
+#include "rect.hpp"
+#include "person.hpp"
 
 using namespace std;
 
-class Point: public Object {
+template<typename T>
+class Any {
 public:
-	Point() {
+	T* ptr;
+
+	Any(T* ptr) :
+			ptr(ptr) {
 	}
 
-	Int x = 0;
-	Int y = 0;
-
-	Double length() const {
-		return ((x * x) + (y * y)).sqrt();
+	T& operator*() {
+		return *ptr;
 	}
 
-	Point operator+(Point* other) {
-		return Point::init(x + other->x, y + other->y);
+	T* operator->() {
+		return ptr;
+	}
+};
+
+template<size_t size>
+class Chars {
+	char _chars[size];
+public:
+
+};
+
+class PointInterface {
+public:
+	virtual Int& getX() = 0;
+
+	virtual Int twice() const = 0;
+
+	virtual Int add(PointInterface* other) = 0;
+};
+
+class Point2: public PointInterface {
+public:
+	Int x;
+
+	Point2(Int x) :
+			x(x) {
+
 	}
 
-	Reference<String> toString() const {
-		return String_init_fromBytes("(", 1)
-				->concat(x.toString())
-				->concat(String_init_fromBytes(", ", 2))
-				->concat(y.toString())
-				->concat(String_init_fromBytes(")", 1));
+	Int twice() const {
+		return x + x;
 	}
 
-	const Type runtimeType() const {
-		return xaneType;
+	~Point2() {
 	}
 
-	static const Type xaneType;
+	Int add(PointInterface* other) {
+		return x + other->getX();
+	}
 
-	static Point init(Int x, Int y) {
-		Point self;
+	Int& getX() {
+		return x;
+	}
+};
+
+class Point3: public PointInterface {
+public:
+	Int x;
+
+	Point3() :
+			x(0) {
+
+	}
+
+	Point3(Int x) :
+			x(x) {
+	}
+
+	Int twice() const {
+		return x + x;
+	}
+
+	~Point3() {
+	}
+
+	Int add(PointInterface* other) {
+		return x - other->getX();
+	}
+
+	Int& getX() {
+		return x;
+	}
+
+	Bool operator==(Point3 other) {
+		return x == other.x;
+	}
+
+	static Point3 init(Int x) {
+		Point3 self;
 		self.x = x;
-		self.y = y;
 		return self;
 	}
 };
 
-const Type Point::xaneType("Sample", "Sample", "Point");
-
-class Rect: public ReferencedObject {
+template<typename TaskType>
+class TaskRunner {
 public:
-	Rect() {
+	TaskType task;
+
+	TaskRunner(TaskType task) :
+			task(task) {
 	}
 
-	Int length;
-
-	Int height;
-
-	Int area() const {
-		return length * height;
-	}
-
-	Reference<String> toString() const {
-		return String_init_fromLiteral("Rect(length: ")
-				->concat(length)
-				->concat(String_init_fromLiteral(", height"))
-				->concat(height)
-				->concat(String_init_fromLiteral(")"));
-	}
-
-	const Type runtimeType() const {
-		return xaneType;
-	}
-
-	static const Type xaneType;
-
-	/*
-	void deinit() {
-
-	}
-	*/
-
-	static Reference<Rect> init(Int length, Int height) {
-		Reference<Rect> self(new Rect());
-		self->length = length;
-		self->height = height;
-		return self;
+	void execute() {
+		cout << "Starting task ..." << endl;
+		task.run();
+		cout << "Done running task." << endl;
 	}
 };
 
-const Type Rect::xaneType("Sample", "Sample", "Rect");
-
-class Todo: public ReferencedObject {
+class MyTask {
 public:
-	Todo() {
-	}
-
-	Todo& operator=(Todo&& other) {
-		name = other.name;
-		return *this;
-	}
-
-	Reference<String> name;
-
-	const Type runtimeType() const {
-		return xaneType;
-	}
-
-	static const Type xaneType;
-
-
-	Reference<String> toString() const {
-		return name.toString();
-	}
-
-	void deinit() {
-		print(CString("Being deleted: ").concat(name));
-	}
-
-	static Reference<Todo> init(Reference<String> name) {
-		Reference<Todo> self(new Todo());
-		self->name = name;
-		return self;
+	void run() {
+		cout << "Running task ..." << endl;
 	}
 };
 
-const Type Todo::xaneType("Sample", "Sample", "Todo");
-
-class Person: public ReferencedObject {
-public:
-	Person() {
-	}
-
-	Reference<String> name;
-
-	Reference<Todo> todo1;
-	Reference<Todo> todo2;
-
-	const Type runtimeType() const {
-		return xaneType;
-	}
-
-	Reference<String> toString() const {
-		return name.toString();
-	}
-
-	void deinit() {
-		print(CString("Being deleted: ").concat(name));
-	}
-
-	static const Type xaneType;
-
-	static Reference<Person> init() {
-		Reference<Person> self(new Person());
-		self->name = String_init_fromLiteral("Teja");
-		self->todo1 = Todo::init(String_init_fromLiteral("Laundry"));
-		self->todo2 = Todo::init(String_init_fromLiteral("Xane"));
-		return self;
-	}
-
-	/*
-	 Int Rect_area(Reference<Rect> self) {
-	 // TODO self->length
-	 }
-	 */
-};
-
-const Type Person::xaneType("Sample", "Sample", "Person");
-
-Reference<Person> teja() {
-	return Person::init();
+Point doublePoint(Point p) {
+	return Point::init(p.x + p.x, p.y + p.y);
 }
 
-void hello(Reference<Person> person) {
-	print(person->name);
-	print(person->todo1->name);
-	print(person->todo2->name);
-}
-
-static const char * inText = "Hello";
-
-static uint64_t inData = 5;
-
-void printType(Type t) {
-	int inStack;
-	print(t.name);
-	printf("0x%p\n", t.name.chars);
-	printf("0x%p\n", &t.library);
-	printf("0x%p\n", hello);
-	printf("0x%p\n", inText);
-	printf("0x%p\n", &inData);
-	uint64_t& address = *(uint64_t *)0x0040b010;
-	printf("%d\n", address);
-	printf("%p\n", &inStack);
-
+void printPoint(Point p) {
+	print(p.toString());
 }
 
 int main() {
-	/*
-	Int a = 5;
-	Int b = 20;
-	print((a + b).toString());
+	Point2 p2(5);
+	Point3 p3(20);
+	printf("%ld\n", p2.add(&p3).value);
+	printf("%ld\n", p3.add(&p2).value);
 
-	Point point = Point::init(5, 10);
-	print(point.toString());
+	Array<Point3, 5> array = { Point3::init(10), Point3::init(20), Point3::init(
+			30), Point3::init(40), Point3::init(50), };
+	array.set(2, p3);
+	printf("%ld\n", array.get(2).x.value);
+	printf("%ld\n", array.indexOf(p3).value);
+	printf("%ld\n", array.last().x.value);
 
-	Point point1 = Point::init(10, 5);
-	print(point1.toString());
+	MyTask task;
+	TaskRunner<MyTask> runner(task);
+	runner.execute();
 
-	print(point.length().toString());
+	printPoint(doublePoint(Point::init(5, 10)));
 
-	hello(teja());
-
-	if(point.runtimeType() == point1.runtimeType()) {
-		print(CString("Yes"));
-	}
-	*/
-
-	// Point_init(&point, 5, 10);
-	// printf("%u\n", (uint64_t) Point_length(point));
+	// std::array<int, 5> a;
 
 	/*
-	 Point point2;
-	 Point add = Point_op_add(&point, &point2);
-	 printf("%u\n", Point_toString(add));
+	 Int a = 5;
+	 Int b = 20;
+	 print((a + b).toString());
+
+	 Point point = Point::init(5, 10);
+	 print(point.toString());
+
+	 Point point1 = Point::init(10, 5);
+	 print(point1.toString());
+
+	 print(point.length().toString());
+
+	 hello(teja());
+
+	 if(point.runtimeType() == point1.runtimeType()) {
+	 print(NewROString("Yes"));
+	 }
 	 */
-
-	print("---");
-
-	Type t = Person::xaneType;
-	printType(t);
 }
 
 /*
 
-class List<T> {
-	var t: T
-}
+ class List<T> {
+ var t: T
+ }
 
+ */
+
+/*
+ Int a = 5;
+ Int b = 20;
+ print((a + b).toString());
+
+ Point point = Point::init(5, 10);
+ print(point.toString());
+
+ Point point1 = Point::init(10, 5);
+ print(point1.toString());
+
+ print(point.length().toString());
+
+ hello(teja());
+
+ if(point.runtimeType() == point1.runtimeType()) {
+ print(NewROString("Yes"));
+ }
  */
