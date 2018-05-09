@@ -12,20 +12,19 @@
 
 using namespace std;
 
-class Point: public Object {
-public:
+struct Point: public Object {
 	Point() {
 	}
 
-	Int x = 0;
-	Int y = 0;
+	Int x;
+	Int y;
 
 	Double length() {
 		return ((x * x) + (y * y)).sqrt();
 	}
 
-	Point operator+(Point* other) {
-		return Point::init(x + other->x, y + other->y);
+	Point operator+(Point other) {
+		return Point::init(x + other.x, y + other.y);
 	}
 
 	Reference<String> toString() {
