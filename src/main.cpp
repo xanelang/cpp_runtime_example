@@ -10,6 +10,7 @@
 #include <array>
 #include <vector>
 #include "core.hpp"
+#include <memory>
 
 #include "point.hpp"
 #include "rect.hpp"
@@ -147,26 +148,28 @@ void printPoint(Point p) {
 }
 
 int main() {
-	Point2 p2(5);
-	Point3 p3(20);
-	printf("%ld\n", p2.add(&p3).value);
-	printf("%ld\n", p3.add(&p2).value);
+	/*
+	 Point2 p2(5);
+	 Point3 p3(20);
+	 printf("%ld\n", p2.add(&p3).value);
+	 printf("%ld\n", p3.add(&p2).value);
 
-	Array<Point3, 5> array = { Point3::init(10), Point3::init(20), Point3::init(
-			30), Point3::init(40), Point3::init(50), };
-	array.set(2, p3);
-	printf("%ld\n", array.get(2).x.value);
-	printf("%ld\n", array.indexOf(p3).value);
-	printf("%ld\n", array.last().x.value);
+	 Array<Point3, 5> array = { Point3::init(10), Point3::init(20), Point3::init(
+	 30), Point3::init(40), Point3::init(50), };
+	 array.set(2, p3);
+	 printf("%ld\n", array.get(2).x.value);
+	 printf("%ld\n", array.indexOf(p3).value);
+	 printf("%ld\n", array.last().x.value);
 
-	MyTask task;
-	TaskRunner<MyTask> runner(task);
-	runner.execute();
+	 MyTask task;
+	 TaskRunner<MyTask> runner(task);
+	 runner.execute();
 
-	printPoint(doublePoint(Point::init(5, 10)));
+	 doublePoint(Point::init(5, 10)).x = 10;
+	 Point::init(5, 10).x = 10;
+	 */
 
 	// std::array<int, 5> a;
-
 	/*
 	 Int a = 5;
 	 Int b = 20;
@@ -180,12 +183,30 @@ int main() {
 
 	 print(point.length().toString());
 
+	 printPoint(doublePoint(Point::init(5, 10)));
+	 */
+
+	/*
 	 hello(teja());
 
-	 if(point.runtimeType() == point1.runtimeType()) {
+	 if (point.runtimeType() == point1.runtimeType()) {
 	 print(NewROString("Yes"));
 	 }
 	 */
+
+	Reference<Animal> animal = Dog::init().cast<Animal>();
+	animal->eat();
+	{
+		Reference<Dog> dog = animal.cast<Dog>();
+		dog->bark();
+	}
+	animal = Cat::init().cast<Animal>();
+	animal->eat();
+	{
+		Reference<Cat> cat = animal.cast<Cat>();
+		cat->meow();
+	}
+
 }
 
 /*

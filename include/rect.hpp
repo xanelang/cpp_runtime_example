@@ -10,6 +10,45 @@
 
 #include "core.hpp"
 
+struct Animal: public ReferencedObject {
+	// TODO virtual void eat() = 0;
+	virtual void eat() {
+		print(String::init_fromLiteral("yum yum!"));
+	}
+};
+
+struct Dog: Animal {
+	virtual void eat() {
+		print(String::init_fromLiteral("yum yum!"));
+	}
+	virtual void bark() {
+		print(String::init_fromLiteral("bow bow!"));
+	}
+	static Reference<Dog> init() {
+		Reference<Dog> self(new Dog());
+		return self;
+	}
+	~Dog() {
+		print(String::init_fromLiteral("Dog deleted!"));
+	}
+};
+
+struct Cat: Animal {
+	virtual void eat() {
+		print(String::init_fromLiteral("yum yum!"));
+	}
+	virtual void meow() {
+		print(String::init_fromLiteral("meow meow!"));
+	}
+	static Reference<Cat> init() {
+		Reference<Cat> self(new Cat());
+		return self;
+	}
+	~Cat() {
+		print(String::init_fromLiteral("Cat deleted!"));
+	}
+};
+
 class Rect: public ReferencedObject {
 public:
 	Rect() {
