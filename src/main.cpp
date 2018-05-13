@@ -15,6 +15,7 @@
 #include "point.hpp"
 #include "rect.hpp"
 #include "person.hpp"
+#include "taskrunner.hpp"
 
 using namespace std;
 
@@ -116,37 +117,6 @@ public:
 	}
 };
 
-template<typename TaskType>
-class TaskRunner {
-public:
-	TaskType task;
-
-	TaskRunner(TaskType task) :
-			task(task) {
-	}
-
-	void execute() {
-		cout << "Starting task ..." << endl;
-		task.run();
-		cout << "Done running task." << endl;
-	}
-};
-
-class MyTask {
-public:
-	void run() {
-		cout << "Running task ..." << endl;
-	}
-};
-
-Point doublePoint(Point p) {
-	return Point::init(p.x + p.x, p.y + p.y);
-}
-
-void printPoint(Point p) {
-	print(p.toString());
-}
-
 int main() {
 	/*
 	 Point2 p2(5);
@@ -160,10 +130,6 @@ int main() {
 	 printf("%ld\n", array.get(2).x.value);
 	 printf("%ld\n", array.indexOf(p3).value);
 	 printf("%ld\n", array.last().x.value);
-
-	 MyTask task;
-	 TaskRunner<MyTask> runner(task);
-	 runner.execute();
 
 	 doublePoint(Point::init(5, 10)).x = 10;
 	 Point::init(5, 10).x = 10;
@@ -194,19 +160,24 @@ int main() {
 	 }
 	 */
 
-	Reference<Animal> animal = Dog::init().cast<Animal>();
+	/* TODO
+	Reference<Animal> animal = Dog::init().as<Animal>();
 	animal->eat();
 	{
-		Reference<Dog> dog = animal.cast<Dog>();
+		Reference<Dog> dog = animal.as<Dog>();
 		dog->bark();
 	}
-	animal = Cat::init().cast<Animal>();
+	animal = Cat::init().as<Animal>();
 	animal->eat();
 	{
-		Reference<Cat> cat = animal.cast<Cat>();
+		Reference<Cat> cat = animal.as<Cat>();
 		cat->meow();
 	}
+	*/
 
+	 MyTask task = MyTask::init(5);
+	 TaskRunner<MyTask> runner = TaskRunner<MyTask>::init(task);
+	 runner.execute();
 }
 
 /*

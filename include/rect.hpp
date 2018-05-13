@@ -10,28 +10,33 @@
 
 #include "core.hpp"
 
-struct Animal: public ReferencedObject {
-	// TODO virtual void eat() = 0;
-	virtual void eat() {
-		print(String::init_fromLiteral("yum yum!"));
-	}
+struct Animal: ReferencedObject {
+  static constexpr Type xaneType = Type("Sample", "Sample", "Animal");
+  Type runtimeType() {
+    return xaneType;
+  }
+  virtual Void eat() = 0;
 };
-
 struct Dog: Animal {
-	virtual void eat() {
-		print(String::init_fromLiteral("yum yum!"));
-	}
-	virtual void bark() {
-		print(String::init_fromLiteral("bow bow!"));
-	}
-	static Reference<Dog> init() {
-		Reference<Dog> self(new Dog());
-		return self;
-	}
-	~Dog() {
-		print(String::init_fromLiteral("Dog deleted!"));
-	}
+  static constexpr Type xaneType = Type("Sample", "Sample", "Dog");
+  static Reference<Dog> init() {
+    return Reference<Dog>(new Dog());
+  }
+  Void eat() {
+    print(String::init_fromBytes("yum yum!", 8));
+  }
+  Void bark() {
+    print(String::init_fromBytes("bow bow!", 8));
+  }
+  Type runtimeType() {
+    return xaneType;
+  }
+  ~Dog() {
+    print(String::init_fromBytes("Dog deinitialized!", 18));
+  }
 };
+constexpr Type Animal::xaneType;
+constexpr Type Dog::xaneType;
 
 struct Cat: Animal {
 	virtual void eat() {
@@ -51,6 +56,7 @@ struct Cat: Animal {
 
 class Rect: public ReferencedObject {
 public:
+	static constexpr Type xaneType = Type("Sample", "Sample", "Rect");
 	Rect() {
 	}
 
@@ -63,24 +69,21 @@ public:
 	}
 
 	Reference<String> toString() {
-		return String::init_fromLiteral("Rect(length: ")
-				->concat(length)
-				->concat(String::init_fromLiteral(", height"))
-				->concat(height)
-				->concat(String::init_fromLiteral(")"));
+		return String::init_fromLiteral("Rect(length: ")->concat(length)->concat(
+				String::init_fromLiteral(", height"))->concat(height)->concat(
+				String::init_fromLiteral(")"));
 	}
 
 	const Type runtimeType() const {
 		return xaneType;
 	}
 
-	static constexpr Type xaneType = Type("Sample", "Sample", "Rect");
 
 	/*
-	void deinit() {
+	 void deinit() {
 
-	}
-	*/
+	 }
+	 */
 
 	static Reference<Rect> init(Int length, Int height) {
 		Reference<Rect> self(new Rect());
@@ -89,4 +92,7 @@ public:
 		return self;
 	}
 };
+
+constexpr Type Rect::xaneType;
+
 #endif /* INCLUDE_RECT_HPP_ */

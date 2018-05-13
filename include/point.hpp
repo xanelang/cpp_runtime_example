@@ -12,9 +12,10 @@
 
 using namespace std;
 
-struct Point {
+struct Point: Object {
 	Int x;
 	Int y;
+	static constexpr Type xaneType = Type("Sample", "Sample", "Point");
 	static Point init(Int x, Int y) {
 		Point self;
 		self.x = x;
@@ -22,7 +23,7 @@ struct Point {
 		return self;
 	}
 	Double length() {
-		return ((x + x) + (y + y)).sqrt();
+		return ((x * x) + (y * y)).sqrt();
 	}
 	Reference<String> toString() {
 		return String::init_fromBytes("(", 1)->operator+(x.toString())->operator+(
@@ -32,10 +33,19 @@ struct Point {
 	Point operator+(Point other) {
 		return Point::init((x + other.x), (y + other.y));
 	}
-	const Type runtimeType() const {
+	Type runtimeType() {
 		return xaneType;
 	}
-	static constexpr Type xaneType = Type("Sample", "Sample", "Point");
 };
+
+constexpr Type Point::xaneType;
+
+Point doublePoint(Point p) {
+	return Point::init(p.x + p.x, p.y + p.y);
+}
+
+void printPoint(Point p) {
+	print(p.toString());
+}
 
 #endif /* INCLUDE_POINT_HPP_ */
